@@ -1,0 +1,35 @@
+// -----------------------------------------------
+// Imports ///////////////////////////////////////
+// -----------------------------------------------
+// @import "../global.scss";
+
+// -----------------------------------------------
+// Styling ///////////////////////////////////////
+// -----------------------------------------------
+
+div#root {
+  background: white;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+
+  & > div.Layout {
+    background: pink;
+    width: 100%;
+    max-width: 1000px;
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+
+    div#root div.centrepane > main {
+      padding: 30px;
+      width: 100%;
+    }
+  }
+}
+
+div.StickyHeader {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
