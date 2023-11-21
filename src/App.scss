@@ -1,0 +1,27 @@
+* {
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
+  font-family: Playfair-VariableFont_wght;
+}
+main {
+  padding: 20px;
+  background: white;
+
+  div.font {
+    @font-face {
+      font-family: PlayfairDisplay-VariableFont_wght;
+      src: URL(../public/PlayfairDisplay-VariableFont_wght.ttf);
+    }
+    .PlayfairDisplay-VariableFont_wght {
+      font-family: PlayfairDisplay-VariableFont_wght;
+    }
+    @font-face {
+      font-family: PTSerifCaption-Regular;
+      src: URL(../public/PTSerifCaption-Regulart.ttf);
+    }
+    .PTSerifCaption-Regular {
+      font-family: PTSerifCaption-Regular;
+    }
+  }
+}

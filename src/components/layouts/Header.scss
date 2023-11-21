@@ -1,0 +1,19 @@
+header {
+  padding: 0px 5px;
+  background-color: rgb(211, 78, 204);
+  // display: flex;
+
+  h1 {
+    color: black;
+    font-size: 250%;
+  }
+  p.welcome {
+    color: rgb(0, 0, 0);
+    flex: 1px;
+    margin-left: 0.5;
+    text-align: right;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+  }
+}

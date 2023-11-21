@@ -1,0 +1,16 @@
+nav {
+  padding: 5px;
+  background-color: plum;
+  display: flex;
+  gap: 10px;
+
+  div.navItem a {
+    color: white;
+    text-decoration: none;
+    padding: 7px;
+
+    &:hover {
+      color: black;
+    }
+  }
+}
