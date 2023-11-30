@@ -146,7 +146,7 @@ export default function ModuleForm({
         type="text"
         name="ModuleCode"
         placeholder="Please enter the code of the module"
-        value={module.Modulecode}
+        value={module.ModuleCode}
       />
 
       <label htmlFor="ModuleLevel"> Module Level</label>

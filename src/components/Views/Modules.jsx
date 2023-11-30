@@ -14,7 +14,7 @@ function Modules() {
   const [modules, setModules] = useState(null);
   const [loadingMessage, setloadingMessage] = useState("Loading Records...");
   const [showNewModuleForm, setshowNewModuleForm] = useState(false);
-  const [showJoinMOduleForm, setShowJoinModuleForm] = useState(false);
+  const [showJoinModuleForm, setShowJoinModuleForm] = useState(false);
 
   //Context---------------------------------------------------------
   //Methods---------------------------------------------------------
@@ -31,11 +31,8 @@ function Modules() {
     apiCall(endpoint);
   }, [endpoint]);
 
-  const handleButtonClick = () => {
-    setshowNewModuleForm(true);
-  };
-  const handleCancel = () => {
-    setshowNewModuleForm(false);
+  const handleJoin = () => {
+    setShowJoinModuleForm(false);
   };
   const handleSuccess = () => {
     setshowNewModuleForm(false);
@@ -67,14 +64,17 @@ function Modules() {
       )}
       <CardContainer>
         <div>
-          <button type="button" onClick={handleButtonClick}>
+          <button type="button" onClick={handleSuccess}>
             Add Module
           </button>
-          <button type="button" onClick={handleButtonClick}>
+          <button type="button" onClick={handleJoin}>
             Join Module
           </button>
         </div>
       </CardContainer>
+
+      {showJoinModuleForm && <p>{"<ModuleForm/>"}</p>}
+      {showJoinModuleForm && <p>{"<JoinModuleForm/>"}</p>}
 
       <div className="font">
         <div className="PTSerifCaption-Regular"></div>
