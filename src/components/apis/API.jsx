@@ -1,14 +1,16 @@
-import apiURL from "../apis/apiURL.jsx";
+import apiURL from "./apiURL.jsx";
 
-const API = {};
+export const API = {};
+
 API.get = (endpoint) => callFetch(endpoint, "GET", null);
 API.post = (endpoint, data) => callFetch(endpoint, "POST", data);
 API.put = (endpoint, data) => callFetch(endpoint, "PUT", data);
 API.delete = (endpoint) => callFetch(endpoint, "DELETE", null);
 
 const callFetch = async (endpoint, method, dataObj) => {
-  //Build request object
-  let requestObj = { method: method }; //GET, POST, PUT or DELETE
+  console.log(`endpoint=${endpoint}`);
+  // Build request object
+  let requestObj = { method: method }; // GET, POST, PUT or DELETE
   if (dataObj)
     requestObj = {
       ...requestObj,
@@ -16,22 +18,16 @@ const callFetch = async (endpoint, method, dataObj) => {
       body: JSON.stringify(dataObj),
     };
 
-  //call the fetch and process the return
+  // Call the fetch and process the return
   try {
     const endpointAddress = apiURL + endpoint;
     const response = await fetch(endpointAddress, requestObj);
     const result = await response.json();
     return response.status >= 200 && response.status < 300
       ? { isSuccess: true, result: result }
-      : {
-          isSuccess: false,
-          message: `Error recovering: status code ${response.status}`,
-        };
+      : { isSuccess: false, message: `${result.message}` };
   } catch (error) {
-    return {
-      isSuccess: false,
-      message: error.message,
-    };
+    return { isSuccess: false, message: error.message };
   }
 };
 export default API;

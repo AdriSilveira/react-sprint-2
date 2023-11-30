@@ -9,14 +9,12 @@ function Modules() {
   //Initialisation--------------------------------------------------
   const loggedinUserID = 279;
   const endpoint = `/modules`;
-  // const allModulesEndpoint = `/modules`;
 
   //State-----------------------------------------------------------
   const [modules, setModules] = useState(null);
   const [loadingMessage, setloadingMessage] = useState("Loading Records...");
   const [showNewModuleForm, setshowNewModuleForm] = useState(false);
-
-  // const [allModules, setAllModules] = useState(null);
+  const [showJoinMOduleForm, setShowJoinModuleForm] = useState(false);
 
   //Context---------------------------------------------------------
   //Methods---------------------------------------------------------
@@ -27,7 +25,9 @@ function Modules() {
       ? setModules(response.result)
       : setloadingMessage(response.message);
   };
+  console.log("Show me");
   useEffect(() => {
+    console.log("here");
     apiCall(endpoint);
   }, [endpoint]);
 
@@ -65,18 +65,20 @@ function Modules() {
           })}
         </CardContainer>
       )}
-      <div>
-        <button type="button" onClick={handleButtonClick}>
-          Add Module
-        </button>
-      </div>
-      {showNewModuleForm && (
-        <ModuleForm onCancel={handleCancel} onSuccess={handleSuccess} />
-      )}
+      <CardContainer>
+        <div>
+          <button type="button" onClick={handleButtonClick}>
+            Add Module
+          </button>
+          <button type="button" onClick={handleButtonClick}>
+            Join Module
+          </button>
+        </div>
+      </CardContainer>
 
       <div className="font">
         <div className="PTSerifCaption-Regular"></div>
-        <div className="PlayfairDisplay-VariableFont_wght"></div>
+        <div className="PlayfairDisplay-VariableFont_wght"></div>{" "}
       </div>
     </section>
   );

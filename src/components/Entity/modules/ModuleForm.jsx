@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import Action from "../../UI/Actions.jsx";
+import apiURL from "../../apis/apiURL.jsx";
 
-const initialModule = {
+const emptyModule = {
   ModuleName: "New Module",
   ModuleCode: "XY0000",
   ModuleLevel: 3,
@@ -12,35 +13,69 @@ const initialModule = {
     "https://images.freeimages.com/images/small-previews/9b8/electronic-components-2-1242738.jpg",
 };
 
-function ModuleForm({ onCancel, onSuccess }) {
+export default function ModuleForm({
+  onCancel,
+  onSubmit,
+  initialModule = emptyModule,
+}) {
   // Initialisation ------------------------------
-  const conformance = {
-    html2js: {
-      ModuleName: (value) => (value === "" ? null : value),
-      ModuleCode: (value) => (value === "" ? null : value),
-      ModuleLevel: (value) => parseInt(value),
-      ModuleYearID: (value) => (value == 0 ? null : parseInt(value)),
-      ModuleLeaderID: (value) => (value == 0 ? null : parseInt(value)),
-      ModuleImageURL: (value) => (value === "" ? null : value),
+  const validation = {
+    isValid: {
+      ModuleName: (name) => name.length > 8,
+      ModuleCode: (code) => /^\D{2}\d{4}$/.test(code),
+      ModuleLevel: (level) => level > 2 && level < 8,
+      ModuleYearID: (id) => id !== 0,
+      ModuleLeaderID: (id) => true,
+      ModuleImageURL: (url) =>
+        /^(http|https):\/\/(([a-zA-Z0-9$\-_.+!*'(),;:&=]|%[0-9a-fA-F]{2})+@)?(((25[0-5]|2[0-4][0-9]|[0-1][0-9][0-9]|[1-9][0-9]|[0-9])(\.(25[0-5]|2[0-4][0-9]|[0-1][0-9][0-9]|[1-9][0-9]|[0-9])){3})|localhost|([a-zA-Z0-9\-\u00C0-\u017F]+\.)+([a-zA-Z]{2,}))(:[0-9]+)?(\/(([a-zA-Z0-9$\-_.+!*'(),;:@&=]|%[0-9a-fA-F]{2})*(\/([a-zA-Z0-9$\-_.+!*'(),;:@&=]|%[0-9a-fA-F]{2})*)*)?(\?([a-zA-Z0-9$\-_.+!*'(),;:@&=/?]|%[0-9a-fA-F]{2})*)?(#([a-zA-Z0-9$\-_.+!*'(),;:@&=/?]|%[0-9a-fA-F]{2})*)?)?$/.test(
+          url
+        ),
     },
-    js2html: {
-      ModuleName: (value) => (value === null ? "" : value),
-      ModuleCode: (value) => (value === null ? "" : value),
-      ModuleLevel: (value) => value,
-      ModuleYearID: (value) => (value === null ? 0 : value),
-      ModuleLeaderID: (value) => (value === null ? 0 : value),
-      ModuleImageURL: (value) => (value === null ? "" : value),
+    errorMessage: {
+      ModuleName: "Module name is too short",
+      ModuleCode: "Module code is not in a valid format",
+      ModuleLevel: "Invalid module level",
+      ModuleYearID: "No delivery year has been selected",
+      ModuleLeaderID: "No module leader has been selected",
+      ModuleImageURL: "Image URL is not a valid URL string",
     },
   };
-  const apiURL = "http://softwarehub.uk/unibase/api";
+
+  //   //   const conformance = ['ModuleLevel','ModuleYearID','ModuleLeaderID'];
+  //   // console.log(errorMessage);
+  //   // const conformance = {
+  //   //   html2js: {
+  //   //     ModuleName: (value) => (value === "" ? null : value),
+  //   //     ModuleCode: (value) => (value === "" ? null : value),
+  //   //     ModuleLevel: (value) => parseInt(value),
+  //   //     ModuleYearID: (value) => (value == 0 ? null : parseInt(value)),
+  //   //     ModuleLeaderID: (value) => (value == 0 ? null : parseInt(value)),
+  //   //     ModuleImageURL: (value) => (value === "" ? null : value),
+  //   //   },
+  //   //   js2html: {
+  //   //     ModuleName: (value) => (value === null ? "" : value),
+  //   //     ModuleCode: (value) => (value === null ? "" : value),
+  //   //     ModuleLevel: (value) => value,
+  //   //     ModuleYearID: (value) => (value === null ? 0 : value),
+  //   //     ModuleLeaderID: (value) => (value === null ? 0 : value),
+  //   //     ModuleImageURL: (value) => (value === null ? "" : value),
+  //   //   },
+  //   // };
+  // const apiURL = "http://softwarehub.uk/unibase/api";
   const yearsEndpoint = `${apiURL}/years`;
   const staffEndpoint = `${apiURL}/users/staff`;
   const postModuleEndpoint = `${apiURL}/modules`;
 
-  // State ---------------------------------------
+  //   // State ---------------------------------------
   const [module, setModule] = useState(initialModule);
-  const [years, setYears] = useState(null);
-  const [staff, setStaff] = useState(null);
+  //   const [years, setYears] = useState(null);
+  //   const [staff, setStaff] = useState(null);
+  //   const [errors, setErrors] = useState(
+  //     Object.keys(initialModule).reduce(
+  //       (accum, key) => ({ ...accum, [key]: null }),
+  //       {}
+  //     )
+  //   );
 
   const apiGet = async (endpoint, setState) => {
     const response = await fetch(endpoint);
@@ -72,11 +107,21 @@ function ModuleForm({ onCancel, onSuccess }) {
     apiGet(staffEndpoint, setStaff);
   }, [staffEndpoint]);
 
-  // Handlers ------------------------------------
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setModule({ ...module, [name]: conformance.html2js[name](value) });
-  };
+  //   // Handlers ------------------------------------
+  //   const handleChange = (event) => {
+  //     const { name, value } = event.target;
+  //     const newvalue =
+  //       name === "ModuleLevel" ||
+  //       name === "ModuleYearID" ||
+  //       name === "ModuleLeaderID"
+  //         ? parseInt(value)
+  //         : value;
+  //     setModule({ ...module, [name]: newvalue });
+  //     setErrors({
+  //       ...errors,
+  //       [name]: isValid[name](newvalue) ? null : errorMessage[name],
+  //     });
+  //   };
 
   const handleSubmit = async () => {
     console.log(`Module=[${JSON.stringify(module)}]`);
@@ -87,97 +132,85 @@ function ModuleForm({ onCancel, onSuccess }) {
 
   // View ----------------------------------------
   return (
-    <div className="moduleForm">
-      <div className="FormTray">
-        <label>
-          Module Name
-          <input
-            type="text"
-            name="ModuleName"
-            value={conformance.js2html["ModuleName"](module.ModuleName)}
-            onChange={handleChange}
-          />
-        </label>
+    <form>
+      <label htmlFor="ModuleName"></label>
+      <input
+        type="text"
+        name="ModuleName"
+        placeholder="Please enter the name of the module"
+        value={module.ModuleCode}
+      />
 
-        <label>
-          Module Code
-          <input
-            type="text"
-            name="ModuleCode"
-            value={conformance.js2html["ModuleCode"](module.ModuleCode)}
-            onChange={handleChange}
-          />
-        </label>
+      <label htmlFor="MooduleCode"> Module Code</label>
+      <input
+        type="text"
+        name="ModuleCode"
+        placeholder="Please enter the code of the module"
+        value={module.Modulecode}
+      />
 
-        <label>
-          Module Level
+      <label htmlFor="ModuleLevel"> Module Level</label>
+      <select
+        name="ModuleLevel"
+        placeholder="Please enter the module level"
+        onChange={handleChange}
+      >
+        <option value="0" disabled>
+          None selected
+        </option>
+        {[3, 4, 5, 6, 7].map((level) => (
+          <option key={level}>{level}</option>
+        ))}
+      </select>
+
+      <label>
+        Module Year
+        {!years ? (
+          <p>Loading records ...</p>
+        ) : (
           <select
-            name="ModuleLevel"
-            value={conformance.js2html["ModuleLevel"](module.ModuleLevel)}
+            name="ModuleYearID"
+            value={conformance.js2html["ModuleYearID"](module.ModuleYearID)}
             onChange={handleChange}
           >
-            <option value="0" disabled>
-              None selected
-            </option>
-            {[3, 4, 5, 6, 7].map((level) => (
-              <option key={level}>{level}</option>
+            <option value="0">None selected</option>
+            {years.map((year) => (
+              <option key={year.YearID} value={year.YearID}>
+                {year.YearName}
+              </option>
             ))}
           </select>
-        </label>
+        )}
+      </label>
 
-        <label>
-          Module Year
-          {!years ? (
-            <p>Loading records ...</p>
-          ) : (
-            <select
-              name="ModuleYearID"
-              value={conformance.js2html["ModuleYearID"](module.ModuleYearID)}
-              onChange={handleChange}
-            >
-              <option value="0">None selected</option>
-              {years.map((year) => (
-                <option key={year.YearID} value={year.YearID}>
-                  {year.YearName}
-                </option>
-              ))}
-            </select>
-          )}
-        </label>
-
-        <label>
-          Module Leader
-          {!staff ? (
-            <p>Loading records ...</p>
-          ) : (
-            <select
-              name="ModuleLeaderID"
-              value={conformance.js2html["ModuleLeaderID"](
-                module.ModuleLeaderID
-              )}
-              onChange={handleChange}
-            >
-              <option value="0">None selected</option>
-              {staff.map((member) => (
-                <option key={member.UserID} value={member.UserID}>
-                  {`${member.UserFirstname} ${member.UserLastname}`}
-                </option>
-              ))}
-            </select>
-          )}
-        </label>
-
-        <label>
-          Module Image
-          <input
-            type="text"
-            name="ModuleImageURL"
-            value={conformance.js2html["ModuleImageURL"](module.ModuleImageURL)}
+      <label>
+        Module Leader
+        {!staff ? (
+          <p>Loading records ...</p>
+        ) : (
+          <select
+            name="ModuleLeaderID"
+            value={conformance.js2html["ModuleLeaderID"](module.ModuleLeaderID)}
             onChange={handleChange}
-          />
-        </label>
-      </div>
-
+          >
+            <option value="0">None selected</option>
+            {staff.map((member) => (
+              <option key={member.UserID} value={member.UserID}>
+                {`${member.UserFirstname} ${member.UserLastname}`}
+              </option>
+            ))}
+          </select>
+        )}
+      </label>
+      <label>
+        Module Image
+        <input
+          type="text"
+          name="ModuleImageURL"
+          value={conformance.js2html["ModuleImageURL"](module.ModuleImageURL)}
+          onChange={handleChange}
+        />
+      </label>
       <div>
         <button type="submit" onClick={handleSubmit}>
           Submit
@@ -186,13 +219,6 @@ function ModuleForm({ onCancel, onSuccess }) {
           Cancel
         </button>
       </div>
-    </div>
+    </form>
   );
 }
-
-ModuleForm.propTypes = {
-  onCancel: PropTypes.func,
-  onSuccess: PropTypes.func,
-};
-
-export default ModuleForm;
