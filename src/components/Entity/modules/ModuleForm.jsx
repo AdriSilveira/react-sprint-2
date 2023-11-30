@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import Action from "../../UI/Actions.jsx";
 import apiURL from "../../apis/apiURL.jsx";
+import FormItem from "../../UI/Form.jsx";
 
 const emptyModule = {
   ModuleName: "New Module",
@@ -41,7 +42,7 @@ export default function ModuleForm({
     },
   };
 
-  //   //   const conformance = ['ModuleLevel','ModuleYearID','ModuleLeaderID'];
+  //   const conformance = ['ModuleLevel','ModuleYearID','ModuleLeaderID'];
   //   // console.log(errorMessage);
   //   // const conformance = {
   //   //   html2js: {
@@ -66,16 +67,16 @@ export default function ModuleForm({
   const staffEndpoint = `${apiURL}/users/staff`;
   const postModuleEndpoint = `${apiURL}/modules`;
 
-  //   // State ---------------------------------------
+  // State ---------------------------------------
   const [module, setModule] = useState(initialModule);
-  //   const [years, setYears] = useState(null);
+  const [years, setYears] = useState(null);
   //   const [staff, setStaff] = useState(null);
-  //   const [errors, setErrors] = useState(
-  //     Object.keys(initialModule).reduce(
-  //       (accum, key) => ({ ...accum, [key]: null }),
-  //       {}
-  //     )
-  //   );
+  const [errors, setErrors] = useState(
+    Object.keys(initialModule).reduce(
+      (accum, key) => ({ ...accum, [key]: null }),
+      {}
+    )
+  );
 
   const apiGet = async (endpoint, setState) => {
     const response = await fetch(endpoint);
@@ -107,24 +108,24 @@ export default function ModuleForm({
     apiGet(staffEndpoint, setStaff);
   }, [staffEndpoint]);
 
-  //   // Handlers ------------------------------------
-  //   const handleChange = (event) => {
-  //     const { name, value } = event.target;
-  //     const newvalue =
-  //       name === "ModuleLevel" ||
-  //       name === "ModuleYearID" ||
-  //       name === "ModuleLeaderID"
-  //         ? parseInt(value)
-  //         : value;
-  //     setModule({ ...module, [name]: newvalue });
-  //     setErrors({
-  //       ...errors,
-  //       [name]: isValid[name](newvalue) ? null : errorMessage[name],
-  //     });
-  //   };
+  // Handlers ------------------------------------
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    const newvalue =
+      name === "ModuleLevel" ||
+      name === "ModuleYearID" ||
+      name === "ModuleLeaderID"
+        ? parseInt(value)
+        : value;
+    setModule({ ...module, [name]: newvalue });
+    setErrors({
+      ...errors,
+      [name]: isValid[name](newvalue) ? null : errorMessage[name],
+    });
+  };
 
   const handleSubmit = async () => {
-    console.log(`Module=[${JSON.stringify(module)}]`);
+    // console.log(`Module=[${JSON.stringify(module)}]`);
     const result = await apiPost(postModuleEndpoint, module);
     if (result.isSuccess) onSuccess();
     else alert(result.message);
@@ -132,36 +133,48 @@ export default function ModuleForm({
 
   // View ----------------------------------------
   return (
-    <form>
-      <label htmlFor="ModuleName"></label>
-      <input
-        type="text"
-        name="ModuleName"
-        placeholder="Please enter the name of the module"
-        value={module.ModuleCode}
-      />
+    <form className="BorderedForm">
+      <FormItem
+        label="Module Name"
+        htmlFor="ModuleName"
+        advice="Please enter the name
+        of the module"
+        error="Your module name is too short"
+      >
+        <input
+          type="text"
+          name="ModuleName"
+          value={module.ModuleName}
+          onChange={handleChange}
+        />
+      </FormItem>
 
-      <label htmlFor="MooduleCode"> Module Code</label>
-      <input
-        type="text"
-        name="ModuleCode"
-        placeholder="Please enter the code of the module"
-        value={module.ModuleCode}
-      />
-
-      <label htmlFor="ModuleLevel"> Module Level</label>
-      <select
-        name="ModuleLevel"
-        placeholder="Please enter the module level"
+      <FormItem
+        label="Module Code"
+        htmlFor="ModuleCode"
+        advice="Please enter the module code"
+        error={module.ModuleCode}
         onChange={handleChange}
       >
-        <option value="0" disabled>
-          None selected
-        </option>
-        {[3, 4, 5, 6, 7].map((level) => (
-          <option key={level}>{level}</option>
-        ))}
-      </select>
+        <input type="text" name="ModuleCode" value={module.ModuleCode} />
+      </FormItem>
+
+      <FormItem
+        label="Module Level"
+        htmlFor="ModuleLevel"
+        advice="Choose a level between 3 and 7"
+        error="Invalid level - must be between 3 and 7 inclusive"
+      >
+        <select name="ModuleLevel" value={module.ModuleLevel}>
+          onChange={handleChange}
+          <option value="0" disabled>
+            Select module level
+          </option>
+          {[3, 4, 5, 6, 7].map((level) => (
+            <option key={level}>{level}</option>
+          ))}
+        </select>
+      </FormItem>
 
       <label>
         Module Year
@@ -183,8 +196,8 @@ export default function ModuleForm({
         )}
       </label>
 
-      <label>
-        Module Leader
+      {/* <label> */}
+      {/* Module Leader
         {!staff ? (
           <p>Loading records ...</p>
         ) : (
@@ -210,7 +223,7 @@ export default function ModuleForm({
           value={conformance.js2html["ModuleImageURL"](module.ModuleImageURL)}
           onChange={handleChange}
         />
-      </label>
+      </label> */}
       <div>
         <button type="submit" onClick={handleSubmit}>
           Submit

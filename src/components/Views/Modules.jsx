@@ -64,16 +64,20 @@ function Modules() {
       )}
       <CardContainer>
         <div>
-          <button type="button" onClick={handleSuccess}>
+          <button type="button" onClick={() => setshowNewModuleForm(true)}>
             Add Module
           </button>
-          <button type="button" onClick={handleJoin}>
+          <button type="button" onClick={() => setShowJoinModuleForm(true)}>
             Join Module
           </button>
         </div>
       </CardContainer>
-
-      {showJoinModuleForm && <p>{"<ModuleForm/>"}</p>}
+      {showNewModuleForm && (
+        <ModuleForm
+          onCancel={() => setshowNewModuleForm(false)}
+          onSubmit={handleSuccess}
+        />
+      )}
       {showJoinModuleForm && <p>{"<JoinModuleForm/>"}</p>}
 
       <div className="font">
