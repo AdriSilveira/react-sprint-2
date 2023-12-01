@@ -269,6 +269,20 @@ export default function ModuleForm({
         )}
       </FormItem>
 
+      <FormItem
+        label="Module Image"
+        htmlFor="ModuleImageURL"
+        advice="Please enter the URL of the module's image"
+        error={errors.ModuleImageURL}
+      >
+        <input
+          type="text"
+          name="ModuleName"
+          value={module.ModuleImageURL}
+          onChange={handleChange}
+        />
+      </FormItem>
+
       <div>
         <button type="submit" onClick={handleSubmit}>
           Submit
