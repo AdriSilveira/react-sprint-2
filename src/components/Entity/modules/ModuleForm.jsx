@@ -3,10 +3,11 @@ import PropTypes from "prop-types";
 import Action from "../../UI/Actions.jsx";
 import apiURL from "../../apis/apiURL.jsx";
 import FormItem from "../../UI/Form.jsx";
+import API from "../../apis/API.jsx";
 
 const emptyModule = {
   ModuleName: "New Module",
-  ModuleCode: "XY0000",
+  ModuleCode: "XY0001",
   ModuleLevel: 3,
   ModuleYearID: null,
   ModuleLeaderID: null,
@@ -73,6 +74,17 @@ export default function ModuleForm({
   const [years, setYears] = useState(null);
   const [loadingYearsMessage, setloadingYearsMessage] =
     useState("Loading records");
+
+  const getYears = async () => {
+    const response = await API.get("/years");
+    response.isSuccess
+      ? setYears(response.result)
+      : setloadingYearsMessage(response.message);
+  };
+  useEffect(() => {
+    getYears();
+  }, []);
+
   const [staff, setStaff] = useState(null);
   const [errors, setErrors] = useState(
     Object.keys(initialModule).reduce(
@@ -184,26 +196,7 @@ export default function ModuleForm({
           ))}
         </select>
       </FormItem>
-      <label>
-        Module Year
-        {!years ? (
-          <p>Loading records ...</p>
-        ) : (
-          <select
-            name="ModuleYearID"
-            htmlFor="ModuleYearID"
-            onChange={handleChange}
-          >
-            <option value="0">None selected</option>
-            {years.map((year) => (
-              <option key={year.YearID} value={year.YearID}>
-                {year.YearName}
-              </option>
-            ))}
-          </select>
-        )}
-      </label>
-      console.log( "Fuuuuciiiiiii");
+
       <FormItem
         label="Module year"
         htmlFor="ModuleYearID"
@@ -211,9 +204,9 @@ export default function ModuleForm({
         error={errors.ModuleYearID}
       >
         {!years ? (
-          <p>loadingYearsMessage</p>
+          <p>{loadingYearsMessage}</p>
         ) : years.length === 0 ? (
-          <p>No records found</p>
+          <p>No years found</p>
         ) : (
           <select
             name="ModuleYearID"
@@ -231,6 +224,7 @@ export default function ModuleForm({
           </select>
         )}
       </FormItem>
+
       <div>
         <button type="submit" onClick={handleSubmit}>
           Submit
