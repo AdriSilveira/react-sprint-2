@@ -41,7 +41,7 @@ export default function ModuleForm({
       ModuleImageURL: "Image URL is not a valid URL string",
     },
   };
-
+  console.log("whattttt");
   //   const conformance = ['ModuleLevel','ModuleYearID','ModuleLeaderID'];
   //   // console.log(errorMessage);
   //   // const conformance = {
@@ -66,18 +66,18 @@ export default function ModuleForm({
   const yearsEndpoint = `${apiURL}/years`;
   const staffEndpoint = `${apiURL}/users/staff`;
   const postModuleEndpoint = `${apiURL}/modules`;
-
+  console.log("Hereeee");
   // State ---------------------------------------
   const [module, setModule] = useState(initialModule);
   const [years, setYears] = useState(null);
-  //   const [staff, setStaff] = useState(null);
+  const [staff, setStaff] = useState(null);
   const [errors, setErrors] = useState(
     Object.keys(initialModule).reduce(
       (accum, key) => ({ ...accum, [key]: null }),
       {}
     )
   );
-
+  console.log("Aonde???");
   const apiGet = async (endpoint, setState) => {
     const response = await fetch(endpoint);
     const result = await response.json();
@@ -99,7 +99,7 @@ export default function ModuleForm({
       ? { isSuccess: true }
       : { isSuccess: false, message: result.message };
   };
-
+  console.log("aqui");
   useEffect(() => {
     apiGet(yearsEndpoint, setYears);
   }, [yearsEndpoint]);
@@ -107,7 +107,7 @@ export default function ModuleForm({
   useEffect(() => {
     apiGet(staffEndpoint, setStaff);
   }, [staffEndpoint]);
-
+  console.log("I am lost");
   // Handlers ------------------------------------
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -139,7 +139,7 @@ export default function ModuleForm({
         htmlFor="ModuleName"
         advice="Please enter the name
         of the module"
-        error="Your module name is too short"
+        error={errors.ModuleName}
       >
         <input
           type="text"
@@ -148,25 +148,31 @@ export default function ModuleForm({
           onChange={handleChange}
         />
       </FormItem>
-
       <FormItem
         label="Module Code"
         htmlFor="ModuleCode"
         advice="Please enter the module code"
-        error={module.ModuleCode}
-        onChange={handleChange}
+        error={errors.ModuleCode}
       >
-        <input type="text" name="ModuleCode" value={module.ModuleCode} />
+        <input
+          type="text"
+          name="ModuleCode"
+          value={module.ModuleCode}
+          onChange={handleChange}
+        />
       </FormItem>
-
       <FormItem
         label="Module Level"
         htmlFor="ModuleLevel"
         advice="Choose a level between 3 and 7"
-        error="Invalid level - must be between 3 and 7 inclusive"
+        error={errors.ModuleLevel}
       >
-        <select name="ModuleLevel" value={module.ModuleLevel}>
+        console.log("What");
+        <select
+          name="ModuleLevel"
+          value={module.ModuleLevel}
           onChange={handleChange}
+        >
           <option value="0" disabled>
             Select module level
           </option>
@@ -175,7 +181,6 @@ export default function ModuleForm({
           ))}
         </select>
       </FormItem>
-
       <label>
         Module Year
         {!years ? (
@@ -183,7 +188,7 @@ export default function ModuleForm({
         ) : (
           <select
             name="ModuleYearID"
-            value={conformance.js2html["ModuleYearID"](module.ModuleYearID)}
+            htmlFor="ModuleYearID"
             onChange={handleChange}
           >
             <option value="0">None selected</option>
@@ -195,35 +200,34 @@ export default function ModuleForm({
           </select>
         )}
       </label>
-
-      {/* <label> */}
-      {/* Module Leader
-        {!staff ? (
-          <p>Loading records ...</p>
+      console.log( "Fuuuuciiiiiii");
+      <FormItem
+        label="Module year"
+        htmlFor="ModuleYearID"
+        advice="Select year of delivery"
+        error={errors.ModuleYearID}
+      >
+        {!years ? (
+          <p>loadingYearsMessage</p>
+        ) : years.length === 0 ? (
+          <p>No records found</p>
         ) : (
           <select
-            name="ModuleLeaderID"
-            value={conformance.js2html["ModuleLeaderID"](module.ModuleLeaderID)}
+            name="ModuleYearID"
+            value={module.ModuleYearID}
             onChange={handleChange}
           >
-            <option value="0">None selected</option>
-            {staff.map((member) => (
-              <option key={member.UserID} value={member.UserID}>
-                {`${member.UserFirstname} ${member.UserLastname}`}
+            <option value="0" disabled>
+              None selected
+            </option>
+            {years.map((year) => (
+              <option key={year.YearID} value={year.YearID}>
+                {year.YearName}
               </option>
             ))}
           </select>
         )}
-      </label>
-      <label>
-        Module Image
-        <input
-          type="text"
-          name="ModuleImageURL"
-          value={conformance.js2html["ModuleImageURL"](module.ModuleImageURL)}
-          onChange={handleChange}
-        />
-      </label> */}
+      </FormItem>
       <div>
         <button type="submit" onClick={handleSubmit}>
           Submit
