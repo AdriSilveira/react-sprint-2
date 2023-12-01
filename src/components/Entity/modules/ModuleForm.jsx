@@ -69,7 +69,7 @@ export default function ModuleForm({
   const postModuleEndpoint = `${apiURL}/modules`;
   console.log("Hereeee");
   // State ---------------------------------------
-  //maybe modules??????
+
   const [module, setModule] = useState(initialModule);
   const [years, setYears] = useState(null);
   const [loadingYearsMessage, setloadingYearsMessage] =
@@ -83,6 +83,21 @@ export default function ModuleForm({
   };
   useEffect(() => {
     getYears();
+  }, []);
+
+  const [leaders, setLeaders] = useState(null);
+  const [loadingLeadersMessage, setLoadingLeadersMessage] = useState(
+    "Loading records...."
+  );
+
+  const getLeaders = async () => {
+    const response = await API.get("/users/staff");
+    response.isSuccess
+      ? setLeaders(response.result)
+      : setLoadingLeadersMessage(response.message);
+  };
+  useEffect(() => {
+    getLeaders();
   }, []);
 
   const [staff, setStaff] = useState(null);
@@ -219,6 +234,35 @@ export default function ModuleForm({
             {years.map((year) => (
               <option key={year.YearID} value={year.YearID}>
                 {year.YearName}
+              </option>
+            ))}
+          </select>
+        )}
+      </FormItem>
+
+      <FormItem
+        label="Module Leader"
+        htmlFor="ModuleLeaderID"
+        advice="Select module leader"
+        error={errors.ModuleLeaderID}
+      >
+        {!leaders ? (
+          <p>{loadingLeadersMessage}</p>
+        ) : leaders.length === 0 ? (
+          <p>No records found</p>
+        ) : (
+          <select
+            name="ModuleLeaderID"
+            value={module.ModuleLeaderID}
+            onChange={handleChange}
+          >
+            <option value="0" disabled>
+              None selected
+            </option>
+            {leaders.map((leader) => (
+              <option key={leader.UserID} value={leader.UserID}>
+                {leader.UserFirstName}
+                {leader.UserLastName}
               </option>
             ))}
           </select>
