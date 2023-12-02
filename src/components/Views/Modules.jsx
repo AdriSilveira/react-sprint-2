@@ -30,7 +30,7 @@ function Modules() {
     getModules();
   }, []);
   const handleSubmit = async (module) => {
-    const response = await API.post(endpoint, module);
+    const response = await API.post(modulesEndpoint, module);
     return response.isSuccess ? getModules() || true : false;
   };
   const handleJoin = () => {

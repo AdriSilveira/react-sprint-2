@@ -7,7 +7,7 @@ import API from "../../apis/API.jsx";
 
 const emptyModule = {
   ModuleName: "New Module",
-  ModuleCode: "XY0001",
+  ModuleCode: "XY0008",
   ModuleLevel: 3,
   ModuleYearID: null,
   ModuleLeaderID: null,
@@ -18,7 +18,6 @@ const emptyModule = {
 export default function ModuleForm({
   onCancel,
   onSubmit,
-  //handleSubmit,
   initialModule = emptyModule,
 }) {
   // Initialisation ------------------------------
@@ -158,17 +157,17 @@ export default function ModuleForm({
     });
   };
 
-  const handleAdd = async () => {
-    // console.log(`Module=[${JSON.stringify(module)}]`);
-    const result = await apiPost(postModuleEndpoint, module);
-    if (result.isSuccess) onSuccess();
-    else alert(result.message);
-  };
+  // const handleAdd = async () => {
+  //   // console.log(`Module=[${JSON.stringify(module)}]`);
+  //   const result = await apiPost(postModuleEndpoint, module);
+  //   if (result.isSuccess) onSuccess();
+  //   else alert(result.message);
+  // };
 
   const isValidModule = (module) => {
     let isModuleValid = true;
     Object.keys(module).forEach((key) => {
-      if (isValid[key](module[key])) {
+      if (validation.isValid[key](module[key])) {
         errors[key] = null;
       } else {
         errors[key] = errorMessage[key];
@@ -179,13 +178,13 @@ export default function ModuleForm({
   };
   const handleSubmit = (event) => {
     event.preventDefault();
-    isValidModule(module) && onSubmit() && onCancel();
+    isValidModule(module) && onSubmit(module) && onCancel();
     setErrors({ ...errors });
   };
 
   // View ----------------------------------------
   return (
-    <form className="BorderedForm">
+    <form className="BorderedForm" onSubmit={handleSubmit}>
       <FormItem
         label="Module Name"
         htmlFor="ModuleName"
@@ -303,11 +302,8 @@ export default function ModuleForm({
           onChange={handleChange}
         />
       </FormItem>
-
-      <div>
-        <button type="submit" onClick={handleAdd}>
-          Submit
-        </button>
+      <div className="form-buttons">
+        <button type="submit">Submit</button>
         <button type="button" onClick={onCancel}>
           Cancel
         </button>
