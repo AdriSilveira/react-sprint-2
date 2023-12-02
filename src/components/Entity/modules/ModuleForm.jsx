@@ -18,6 +18,7 @@ const emptyModule = {
 export default function ModuleForm({
   onCancel,
   onSubmit,
+  //handleSubmit,
   initialModule = emptyModule,
 }) {
   // Initialisation ------------------------------
@@ -67,7 +68,7 @@ export default function ModuleForm({
   const yearsEndpoint = `${apiURL}/years`;
   const staffEndpoint = `${apiURL}/users/staff`;
   const postModuleEndpoint = `${apiURL}/modules`;
-  console.log("Hereeee");
+
   // State ---------------------------------------
 
   const [module, setModule] = useState(initialModule);
@@ -138,6 +139,9 @@ export default function ModuleForm({
     apiGet(staffEndpoint, setStaff);
   }, [staffEndpoint]);
   console.log("I am lost");
+  // Create a button to open and close the module
+  const [isFormVisible, setIsFormVisible] = useState(false);
+
   // Handlers ------------------------------------
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -154,11 +158,29 @@ export default function ModuleForm({
     });
   };
 
-  const handleSubmit = async () => {
+  const handleAdd = async () => {
     // console.log(`Module=[${JSON.stringify(module)}]`);
     const result = await apiPost(postModuleEndpoint, module);
     if (result.isSuccess) onSuccess();
     else alert(result.message);
+  };
+
+  const isValidModule = (module) => {
+    let isModuleValid = true;
+    Object.keys(module).forEach((key) => {
+      if (isValid[key](module[key])) {
+        errors[key] = null;
+      } else {
+        errors[key] = errorMessage[key];
+        isModuleValid = false;
+      }
+    });
+    return isModuleValid;
+  };
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    isValidModule(module) && onSubmit() && onCancel();
+    setErrors({ ...errors });
   };
 
   // View ----------------------------------------
@@ -197,7 +219,6 @@ export default function ModuleForm({
         advice="Choose a level between 3 and 7"
         error={errors.ModuleLevel}
       >
-        console.log("What");
         <select
           name="ModuleLevel"
           value={module.ModuleLevel}
@@ -277,14 +298,14 @@ export default function ModuleForm({
       >
         <input
           type="text"
-          name="ModuleName"
+          name="ModuleImageURL"
           value={module.ModuleImageURL}
           onChange={handleChange}
         />
       </FormItem>
 
       <div>
-        <button type="submit" onClick={handleSubmit}>
+        <button type="submit" onClick={handleAdd}>
           Submit
         </button>
         <button type="button" onClick={onCancel}>

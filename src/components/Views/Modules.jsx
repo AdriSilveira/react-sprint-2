@@ -7,8 +7,8 @@ import ModuleForm from "../Entity/modules/ModuleForm.jsx";
 
 function Modules() {
   //Initialisation--------------------------------------------------
-  const loggedinUserID = 279;
-  const endpoint = `/modules`;
+  // const endpoint = `/modules/users/${loggedinUser.UserID}`;
+  const modulesEndpoint = "/modules";
 
   //State-----------------------------------------------------------
   const [modules, setModules] = useState(null);
@@ -19,23 +19,31 @@ function Modules() {
   //Context---------------------------------------------------------
   //Methods---------------------------------------------------------
 
-  const apiCall = async (endpoint) => {
-    const response = await API.get(endpoint);
+  const getModules = async () => {
+    const response = await API.get(`/modules`);
     response.isSuccess
       ? setModules(response.result)
       : setloadingMessage(response.message);
   };
   console.log("Show me");
   useEffect(() => {
-    console.log("here");
-    apiCall(endpoint);
-  }, [endpoint]);
-
-  const handleJoin = () => {
-    setShowJoinModuleForm(false);
+    getModules();
+  }, []);
+  const handleSubmit = async (module) => {
+    const response = await API.post(endpoint, module);
+    return response.isSuccess ? getModules() || true : false;
   };
-  const handleSuccess = () => {
+  const handleJoin = () => {
+    setShowJoinModuleForm(true);
+  };
+  const handleAdd = () => {
+    setshowNewModuleForm(true);
+  };
+  const handleDismissAdd = () => {
     setshowNewModuleForm(false);
+  };
+  const handleDismissJoin = () => {
+    setshowJoinModuleForm(false);
   };
   //View------------------------------------------------------------
 
@@ -73,10 +81,7 @@ function Modules() {
         </div>
       </CardContainer>
       {showNewModuleForm && (
-        <ModuleForm
-          onCancel={() => setshowNewModuleForm(false)}
-          onSubmit={handleSuccess}
-        />
+        <ModuleForm onDismiss={handleDismissAdd} onSubmit={handleAdd} />
       )}
       {showJoinModuleForm && <p>{"<JoinModuleForm/>"}</p>}
 
