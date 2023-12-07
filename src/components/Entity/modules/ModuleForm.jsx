@@ -75,14 +75,14 @@ export default function ModuleForm({
   const [loadingYearsMessage, setloadingYearsMessage] =
     useState("Loading records");
 
-  const getYears = async () => {
+  const loadYears = async () => {
     const response = await API.get("/years");
     response.isSuccess
       ? setYears(response.result)
       : setloadingYearsMessage(response.message);
   };
   useEffect(() => {
-    getYears();
+    loadYears();
   }, []);
 
   const [leaders, setLeaders] = useState(null);
@@ -90,14 +90,14 @@ export default function ModuleForm({
     "Loading records...."
   );
 
-  const getLeaders = async () => {
+  const loadLeaders = async () => {
     const response = await API.get("/users/staff");
     response.isSuccess
       ? setLeaders(response.result)
       : setLoadingLeadersMessage(response.message);
   };
   useEffect(() => {
-    getLeaders();
+    loadLeaders();
   }, []);
 
   const [staff, setStaff] = useState(null);

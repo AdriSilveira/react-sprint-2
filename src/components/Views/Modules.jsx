@@ -1,37 +1,27 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import API from "../apis/API.jsx";
+
 import "../../App.scss";
 import { Card, CardContainer } from "../UI/Card.jsx";
 import ModuleForm from "../Entity/modules/ModuleForm.jsx";
+import useLoad from "../apis/useLoad.jsx";
 
 function Modules() {
   //Initialisation--------------------------------------------------
   // const endpoint = `/modules/users/${loggedinUser.UserID}`;
-  const modulesEndpoint = "/modules";
+  const endpoint = "/modules";
 
   //State-----------------------------------------------------------
-  const [modules, setModules] = useState(null);
-  const [loadingMessage, setloadingMessage] = useState("Loading Records...");
+  const [modules, setModules, loadingMessage, loadModules] = useLoad(endpoint);
+
   const [showNewModuleForm, setshowNewModuleForm] = useState(false);
   const [showJoinModuleForm, setShowJoinModuleForm] = useState(false);
-
   //Context---------------------------------------------------------
-  //Methods---------------------------------------------------------
-
-  const getModules = async () => {
-    const response = await API.get(`/modules`);
-    response.isSuccess
-      ? setModules(response.result)
-      : setloadingMessage(response.message);
-  };
-  console.log("Show me");
-  useEffect(() => {
-    getModules();
-  }, []);
+  //Methods-----------------------------------------------------------
   const handleSubmit = async (module) => {
-    const response = await API.post(modulesEndpoint, module);
-    return response.isSuccess ? getModules() || true : false;
+    const response = await API.post(endpoint, module);
+    return response.isSuccess ? loadModules(endpoint) || true : false;
   };
   const handleJoin = () => {
     setShowJoinModuleForm(true);
