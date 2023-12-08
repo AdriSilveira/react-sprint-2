@@ -2,7 +2,7 @@ import "./Form.scss";
 import { useState } from "react";
 import React from "react";
 
-export default function Form(children, onsubmit, onCancel) {
+export default function Form({ children, onsubmit, onCancel }) {
   //Initialisation-------------------------------------------------------
 
   //Hooks----------------------------------------------------------------
@@ -12,24 +12,27 @@ export default function Form(children, onsubmit, onCancel) {
   //Context--------------------------------------------------------------
 
   //Handlers-------------------------------------------------------------
-  const handleSubmit = (event) => {
+  const handleSubmit = (event, onsubmit) => {
     event.preventDefault();
-    onsubmit();
+    onsubmit;
   };
   const handleCancel = () => onCancel;
   //view-----------------------------------------------------------------
   return (
-    <form className="BorderedForm" onSubmit={handleSubmit}>
+    <form
+      className="BorderedForm"
+      onSubmit={(event) => handleSubmit(event, onsubmit)}
+    >
       <div className="FormTray">{children}</div>
 
-      <ActionTray>
-        <div className="form-buttons">
-          <button type="submit">Submit</button>
-          <button type="button" onClick={handleCancel}>
-            Cancel
-          </button>
-        </div>
-      </ActionTray>
+      {/* <ActionTray> */}
+      <div className="form-buttons">
+        <button type="submit">Submit</button>
+        <button type="button" onClick={handleCancel}>
+          Cancel
+        </button>
+      </div>
+      {/* </ActionTray> */}
     </form>
   );
 }
@@ -66,7 +69,7 @@ function useForm(
   //State----------------------------------------------------------------
   const [record, setRecord] = useState(initialRecord);
   const [errors, setErrors] = useState(
-    Object.keys(initialModule).reduce(
+    Object.keys(initialRecord).reduce(
       (accum, key) => ({ ...accum, [key]: null }),
       {}
     )

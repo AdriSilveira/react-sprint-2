@@ -1,7 +1,5 @@
-import { useState, useEffect } from "react";
 import useLoad from "../../apis/useLoad.jsx";
-import { Form } from "react-router-dom";
-import JoinModuleForm from "../JoinModuleForm.jsx";
+import Form from "../../UI/Form.jsx";
 
 const emptyModule = {
   ModuleName: "New Module",
