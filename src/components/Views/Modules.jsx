@@ -1,39 +1,42 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import API from "../apis/API.jsx";
-
 import "../../App.scss";
 import { Card, CardContainer } from "../UI/Card.jsx";
 import ModuleForm from "../Entity/modules/ModuleForm.jsx";
+import JoinModuleForm from "../Entity/JoinModuleForm.jsx";
 import useLoad from "../apis/useLoad.jsx";
 
 function Modules() {
   //Initialisation--------------------------------------------------
-  // const endpoint = `/modules/users/${loggedinUser.UserID}`;
-  const endpoint = "/modules";
+  //const { loggedinUser } = useAuth();
+  //const loggedinUser = {userID:1}
+
+  //const getModulesEndpoint = `/modules/users/${loggedinUser.UserID}`;
+  const getModulesEndpoint = "/modules/users/279";
+  const postModulesEndpoint = "/modules";
+  const postModulemembersendpoint = "/modulemembers";
 
   //State-----------------------------------------------------------
-  const [modules, setModules, loadingMessage, loadModules] = useLoad(endpoint);
+  const [modules, , loadingMessage, loadModules] = useLoad(getModulesEndpoint);
 
-  const [showNewModuleForm, setshowNewModuleForm] = useState(false);
+  const [showAddModuleForm, setShowAddModuleForm] = useState(false);
   const [showJoinModuleForm, setShowJoinModuleForm] = useState(false);
   //Context---------------------------------------------------------
   //Methods-----------------------------------------------------------
-  const handleSubmit = async (module) => {
-    const response = await API.post(endpoint, module);
-    return response.isSuccess ? loadModules(endpoint) || true : false;
+  const toggleAddForm = () => setShowAddModuleForm(!showAddModuleForm);
+  const toggleJoinForm = () => setShowJoinModuleForm(!showJoinModuleForm);
+  const cancelAddForm = () => setShowAddModuleForm(false);
+  const cancelJoinForm = () => setShowJoinModuleForm(false);
+
+  const handleAddSubmit = async (module) => {
+    const response = await API.post(postModulesEndpoint, module);
+    return response.isSuccess;
   };
-  const handleJoin = () => {
-    setShowJoinModuleForm(true);
-  };
-  const handleAdd = () => {
-    setshowNewModuleForm(true);
-  };
-  const handleDismissAdd = () => {
-    setshowNewModuleForm(false);
-  };
-  const handleDismissJoin = () => {
-    setshowJoinModuleForm(false);
+
+  const handleJoinSubmit = async (modulemember) => {
+    const response = await API.post(postModulemembersendpoint, modulemember);
+    return response.isSuccess ? loadModules(getModulesEndpoint) || true : false;
   };
   //View------------------------------------------------------------
 
@@ -62,23 +65,30 @@ function Modules() {
       )}
       <CardContainer>
         <div>
-          <button type="button" onClick={() => setshowNewModuleForm(true)}>
-            Add Module
+          <button type="button" onClick={toggleAddForm}>
+            Add New Module
           </button>
-          <button type="button" onClick={() => setShowJoinModuleForm(true)}>
+        </div>
+        <div>
+          <button type="button" onClick={toggleJoinForm}>
             Join Module
           </button>
         </div>
-      </CardContainer>
-      {showNewModuleForm && (
-        <ModuleForm onDismiss={handleDismissAdd} onSubmit={handleAdd} />
-      )}
-      {showJoinModuleForm && <p>{"<JoinModuleForm/>"}</p>}
+        {showAddModuleForm && (
+          <ModuleForm onCancel={cancelAddForm} onSubmit={handleAddSubmit} />
+        )}
+        {showJoinModuleForm && (
+          <JoinModuleForm
+            onCancel={cancelJoinForm}
+            onSubmit={handleJoinSubmit}
+          />
+        )}
 
-      <div className="font">
-        <div className="PTSerifCaption-Regular"></div>
-        <div className="PlayfairDisplay-VariableFont_wght"></div>{" "}
-      </div>
+        <div className="font">
+          <div className="PTSerifCaption-Regular"></div>
+          <div className="PlayfairDisplay-VariableFont_wght"></div>{" "}
+        </div>
+      </CardContainer>
     </section>
   );
 }

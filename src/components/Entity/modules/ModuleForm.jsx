@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
-import PropTypes from "prop-types";
-import Action from "../../UI/Actions.jsx";
-import apiURL from "../../apis/apiURL.jsx";
-import FormItem from "../../UI/Form.jsx";
-import API from "../../apis/API.jsx";
+import useLoad from "../../apis/useLoad.jsx";
+import { Form } from "react-router-dom";
+import JoinModuleForm from "../JoinModuleForm.jsx";
 
 const emptyModule = {
   ModuleName: "New Module",
@@ -42,150 +40,23 @@ export default function ModuleForm({
       ModuleImageURL: "Image URL is not a valid URL string",
     },
   };
-  console.log("whattttt");
-  //   const conformance = ['ModuleLevel','ModuleYearID','ModuleLeaderID'];
-  //   // console.log(errorMessage);
-  //   // const conformance = {
-  //   //   html2js: {
-  //   //     ModuleName: (value) => (value === "" ? null : value),
-  //   //     ModuleCode: (value) => (value === "" ? null : value),
-  //   //     ModuleLevel: (value) => parseInt(value),
-  //   //     ModuleYearID: (value) => (value == 0 ? null : parseInt(value)),
-  //   //     ModuleLeaderID: (value) => (value == 0 ? null : parseInt(value)),
-  //   //     ModuleImageURL: (value) => (value === "" ? null : value),
-  //   //   },
-  //   //   js2html: {
-  //   //     ModuleName: (value) => (value === null ? "" : value),
-  //   //     ModuleCode: (value) => (value === null ? "" : value),
-  //   //     ModuleLevel: (value) => value,
-  //   //     ModuleYearID: (value) => (value === null ? 0 : value),
-  //   //     ModuleLeaderID: (value) => (value === null ? 0 : value),
-  //   //     ModuleImageURL: (value) => (value === null ? "" : value),
-  //   //   },
-  //   // };
-  // const apiURL = "http://softwarehub.uk/unibase/api";
-  const yearsEndpoint = `${apiURL}/years`;
-  const staffEndpoint = `${apiURL}/users/staff`;
-  const postModuleEndpoint = `${apiURL}/modules`;
+  const conformance = ["ModuleLevel", "ModuleYearID", "ModuleLeaderID"];
 
   // State ---------------------------------------
-
-  const [module, setModule] = useState(initialModule);
-  const [years, setYears] = useState(null);
-  const [loadingYearsMessage, setloadingYearsMessage] =
-    useState("Loading records");
-
-  const loadYears = async () => {
-    const response = await API.get("/years");
-    response.isSuccess
-      ? setYears(response.result)
-      : setloadingYearsMessage(response.message);
-  };
-  useEffect(() => {
-    loadYears();
-  }, []);
-
-  const [leaders, setLeaders] = useState(null);
-  const [loadingLeadersMessage, setLoadingLeadersMessage] = useState(
-    "Loading records...."
+  const [module, errors, handleChange, handleSubmit] = Form.useForm(
+    initialModule,
+    conformance,
+    validation,
+    onCancel,
+    onSubmit
   );
-
-  const loadLeaders = async () => {
-    const response = await API.get("/users/staff");
-    response.isSuccess
-      ? setLeaders(response.result)
-      : setLoadingLeadersMessage(response.message);
-  };
-  useEffect(() => {
-    loadLeaders();
-  }, []);
-
-  const [staff, setStaff] = useState(null);
-  const [errors, setErrors] = useState(
-    Object.keys(initialModule).reduce(
-      (accum, key) => ({ ...accum, [key]: null }),
-      {}
-    )
-  );
-  console.log("Aonde???");
-  const apiGet = async (endpoint, setState) => {
-    const response = await fetch(endpoint);
-    const result = await response.json();
-    setState(result);
-  };
-
-  const apiPost = async (endpoint, record) => {
-    // Build request object
-    const request = {
-      method: "POST",
-      body: JSON.stringify(record),
-      headers: { "Content-type": "application/json" },
-    };
-
-    // Call the Fetch
-    const response = await fetch(endpoint, request);
-    const result = await response.json();
-    return response.status >= 200 && response.status < 300
-      ? { isSuccess: true }
-      : { isSuccess: false, message: result.message };
-  };
-  console.log("aqui");
-  useEffect(() => {
-    apiGet(yearsEndpoint, setYears);
-  }, [yearsEndpoint]);
-
-  useEffect(() => {
-    apiGet(staffEndpoint, setStaff);
-  }, [staffEndpoint]);
-  console.log("I am lost");
-  // Create a button to open and close the module
-  const [isFormVisible, setIsFormVisible] = useState(false);
-
-  // Handlers ------------------------------------
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    const newvalue =
-      name === "ModuleLevel" ||
-      name === "ModuleYearID" ||
-      name === "ModuleLeaderID"
-        ? parseInt(value)
-        : value;
-    setModule({ ...module, [name]: newvalue });
-    setErrors({
-      ...errors,
-      [name]: isValid[name](newvalue) ? null : errorMessage[name],
-    });
-  };
-
-  // const handleAdd = async () => {
-  //   // console.log(`Module=[${JSON.stringify(module)}]`);
-  //   const result = await apiPost(postModuleEndpoint, module);
-  //   if (result.isSuccess) onSuccess();
-  //   else alert(result.message);
-  // };
-
-  const isValidModule = (module) => {
-    let isModuleValid = true;
-    Object.keys(module).forEach((key) => {
-      if (validation.isValid[key](module[key])) {
-        errors[key] = null;
-      } else {
-        errors[key] = errorMessage[key];
-        isModuleValid = false;
-      }
-    });
-    return isModuleValid;
-  };
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    isValidModule(module) && onSubmit(module) && onCancel();
-    setErrors({ ...errors });
-  };
+  const [years, loadingYearsMessage] = useLoad("/years");
+  const [leaders, loadingLeadersMessage] = useLoad("/users/staff");
 
   // View ----------------------------------------
   return (
-    <form className="BorderedForm" onSubmit={handleSubmit}>
-      <FormItem
+    <Form onSubmit={handleSubmit} onCancel={onCancel}>
+      <Form.Item
         label="Module Name"
         htmlFor="ModuleName"
         advice="Please enter the name
@@ -198,8 +69,8 @@ export default function ModuleForm({
           value={module.ModuleName}
           onChange={handleChange}
         />
-      </FormItem>
-      <FormItem
+      </Form.Item>
+      <Form.Item
         label="Module Code"
         htmlFor="ModuleCode"
         advice="Please enter the module code"
@@ -211,8 +82,8 @@ export default function ModuleForm({
           value={module.ModuleCode}
           onChange={handleChange}
         />
-      </FormItem>
-      <FormItem
+      </Form.Item>
+      <Form.Item
         label="Module Level"
         htmlFor="ModuleLevel"
         advice="Choose a level between 3 and 7"
@@ -230,9 +101,9 @@ export default function ModuleForm({
             <option key={level}>{level}</option>
           ))}
         </select>
-      </FormItem>
+      </Form.Item>
 
-      <FormItem
+      <Form.Item
         label="Module year"
         htmlFor="ModuleYearID"
         advice="Select year of delivery"
@@ -258,9 +129,9 @@ export default function ModuleForm({
             ))}
           </select>
         )}
-      </FormItem>
+      </Form.Item>
 
-      <FormItem
+      <Form.Item
         label="Module Leader"
         htmlFor="ModuleLeaderID"
         advice="Select module leader"
@@ -287,9 +158,9 @@ export default function ModuleForm({
             ))}
           </select>
         )}
-      </FormItem>
+      </Form.Item>
 
-      <FormItem
+      <Form.Item
         label="Module Image"
         htmlFor="ModuleImageURL"
         advice="Please enter the URL of the module's image"
@@ -301,13 +172,7 @@ export default function ModuleForm({
           value={module.ModuleImageURL}
           onChange={handleChange}
         />
-      </FormItem>
-      <div className="form-buttons">
-        <button type="submit">Submit</button>
-        <button type="button" onClick={onCancel}>
-          Cancel
-        </button>
-      </div>
-    </form>
+      </Form.Item>
+    </Form>
   );
 }
