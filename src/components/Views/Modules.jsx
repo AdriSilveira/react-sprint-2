@@ -13,7 +13,9 @@ function Modules() {
   //const loggedinUser = {userID:1}
 
   //const getModulesEndpoint = `/modules/users/${loggedinUser.UserID}`;
-  const getModulesEndpoint = "/modules/users/279";
+  //const getModulesEndpoint = "/modules/users/279";
+  const getModulesEndpoint = "/modules";
+
   const postModulesEndpoint = "/modules";
   const postModulemembersendpoint = "/modulemembers";
 
@@ -30,6 +32,7 @@ function Modules() {
   const cancelJoinForm = () => setShowJoinModuleForm(false);
 
   const handleAddSubmit = async (module) => {
+    console.log("onSubmit");
     const response = await API.post(postModulesEndpoint, module);
     return response.isSuccess;
   };

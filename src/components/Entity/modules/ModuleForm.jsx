@@ -2,9 +2,9 @@ import useLoad from "../../apis/useLoad.jsx";
 import Form from "../../UI/Form.jsx";
 //LAST UPDATED 08/12/24============================================
 const emptyModule = {
-  ModuleName: "New Module",
-  ModuleCode: "XY0008",
-  ModuleLevel: 3,
+  ModuleName: "",
+  ModuleCode: "",
+  ModuleLevel: null,
   ModuleYearID: null,
   ModuleLeaderID: null,
   ModuleImageURL:
@@ -17,17 +17,16 @@ export default function ModuleForm({
   initialModule = emptyModule,
 }) {
   // Initialisation ------------------------------
+  console.log("Initilisation module" + initialModule);
   const validation = {
     isValid: {
       ModuleName: (name) => name.length > 8,
-      ModuleCode: (code) => /^\D{2}\d{4}$/.test(code),
+      ModuleCode: (code) => /^\D{2}\d{4}$/,
       ModuleLevel: (level) => level > 2 && level < 8,
       ModuleYearID: (id) => id !== 0,
       ModuleLeaderID: (id) => true,
       ModuleImageURL: (url) =>
-        /^(http|https):\/\/(([a-zA-Z0-9$\-_.+!*'(),;:&=]|%[0-9a-fA-F]{2})+@)?(((25[0-5]|2[0-4][0-9]|[0-1][0-9][0-9]|[1-9][0-9]|[0-9])(\.(25[0-5]|2[0-4][0-9]|[0-1][0-9][0-9]|[1-9][0-9]|[0-9])){3})|localhost|([a-zA-Z0-9\-\u00C0-\u017F]+\.)+([a-zA-Z]{2,}))(:[0-9]+)?(\/(([a-zA-Z0-9$\-_.+!*'(),;:@&=]|%[0-9a-fA-F]{2})*(\/([a-zA-Z0-9$\-_.+!*'(),;:@&=]|%[0-9a-fA-F]{2})*)*)?(\?([a-zA-Z0-9$\-_.+!*'(),;:@&=/?]|%[0-9a-fA-F]{2})*)?(#([a-zA-Z0-9$\-_.+!*'(),;:@&=/?]|%[0-9a-fA-F]{2})*)?)?$/.test(
-          url
-        ),
+        /^(http|https):\/\/(([a-zA-Z0-9$\-_.+!*'(),;:&=]|%[0-9a-fA-F]{2})+@)?(((25[0-5]|2[0-4][0-9]|[0-1][0-9][0-9]|[1-9][0-9]|[0-9])(\.(25[0-5]|2[0-4][0-9]|[0-1][0-9][0-9]|[1-9][0-9]|[0-9])){3})|localhost|([a-zA-Z0-9\-\u00C0-\u017F]+\.)+([a-zA-Z]{2,}))(:[0-9]+)?(\/(([a-zA-Z0-9$\-_.+!*'(),;:@&=]|%[0-9a-fA-F]{2})*(\/([a-zA-Z0-9$\-_.+!*'(),;:@&=]|%[0-9a-fA-F]{2})*)*)?(\?([a-zA-Z0-9$\-_.+!*'(),;:@&=/?]|%[0-9a-fA-F]{2})*)?(#([a-zA-Z0-9$\-_.+!*'(),;:@&=/?]|%[0-9a-fA-F]{2})*)?)?$/,
     },
     errorMessage: {
       ModuleName: "Module name is too short",
@@ -50,6 +49,7 @@ export default function ModuleForm({
   );
   const [years, loadingYearsMessage] = useLoad("/years");
   const [leaders, loadingLeadersMessage] = useLoad("/users/staff");
+  console.log(JSON.stringify(leaders) + "leaders");
 
   // View ----------------------------------------
   return (
@@ -150,8 +150,9 @@ export default function ModuleForm({
             </option>
             {leaders.map((leader) => (
               <option key={leader.UserID} value={leader.UserID}>
-                {leader.UserFirstName}
-                {leader.UserLastName}
+                {leader.UserFirstname}
+                {leader.UserLastname}
+                {leader.UserID}
               </option>
             ))}
           </select>

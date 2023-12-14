@@ -12,10 +12,10 @@ export default function Form({ children, onsubmit, onCancel }) {
   //Context--------------------------------------------------------------
 
   //Handlers-------------------------------------------------------------
-  const handleSubmit = (event, onsubmit) => {
-    event.preventDefault();
-    onsubmit;
-  };
+  // const handleSubmit = (event, onsubmit) => {
+  //   event.preventDefault();
+  //   onsubmit;
+  // };
   const handleCancel = () => onCancel;
   //view-----------------------------------------------------------------
   return (
@@ -81,13 +81,16 @@ function useForm(
   const handleChange = (event) => {
     const { name, value } = event.target;
     const newValue = conformance.includes(name) ? parseInt(value) : value;
+    console.log(newValue + "handleChange");
     setRecord({ ...record, [name]: newValue });
     setErrors({
       ...errors,
       [name]: isValid[name](newValue) ? null : errorMessage[name],
     });
+    console.log(record);
   };
   const isValidRecord = (record) => {
+    console.log("isValidRecord");
     let isRecordValid = true;
     Object.keys(record).forEach((key) => {
       if (isValid[key](record[key])) {
@@ -101,11 +104,13 @@ function useForm(
   };
 
   const handleSubmit = () => {
-    isValidRecord(record) && onSubmit(record) && onCancel();
+    console.log(handleSubmit);
+    console.log("Hello again");
+    isValidRecord(record) && onSubmit(record);
     setErrors({ ...errors });
   };
   //view-----------------------------------------------------------------
-  return [record, errors, handleChange];
+  return [record, errors, handleChange, handleSubmit];
 }
 //-----------------------------------
 //Compose Form Object

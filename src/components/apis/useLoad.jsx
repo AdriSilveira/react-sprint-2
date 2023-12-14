@@ -18,7 +18,7 @@ export default function useLoad(endpoint) {
   };
   useEffect(() => {
     loadRecords(endpoint);
-  }, [endpoint]);
+  }, []);
   //Return---------------------------------------------------------
   return [records, setRecords, loadingMessage, loadRecords];
 }
