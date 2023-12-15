@@ -2,7 +2,7 @@ import "./Form.scss";
 import { useState } from "react";
 import React from "react";
 //LAST UPDATED 08/12/24==========================================
-export default function Form({ children, onsubmit, onCancel }) {
+export default function Form({ children, onSubmit, onCancel }) {
   //Initialisation-------------------------------------------------------
 
   //Hooks----------------------------------------------------------------
@@ -12,27 +12,20 @@ export default function Form({ children, onsubmit, onCancel }) {
   //Context--------------------------------------------------------------
 
   //Handlers-------------------------------------------------------------
-  // const handleSubmit = (event, onsubmit) => {
-  //   event.preventDefault();
-  //   onsubmit;
-  // };
-  const handleCancel = () => onCancel;
+
   //view-----------------------------------------------------------------
   return (
-    <form
-      className="BorderedForm"
-      onSubmit={(event) => handleSubmit(event, onSubmit)}
-    >
+    <form className="BorderedForm">
       <div className="FormTray">{children}</div>
 
-      {/* <ActionTray> */}
       <div className="form-buttons">
-        <button type="submit">Submit</button>
-        <button type="button" onClick={handleCancel()}>
+        <button type="submit" onClick={onSubmit}>
+          Submit
+        </button>
+        <button type="button" onClick={onCancel}>
           Cancel
         </button>
       </div>
-      {/* </ActionTray> */}
     </form>
   );
 }
@@ -103,10 +96,9 @@ function useForm(
     return isRecordValid;
   };
 
-  const handleSubmit = () => {
-    console.log(handleSubmit);
-    console.log("Hello again");
-    isValidRecord(record) && onSubmit(record);
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    isValidRecord(record) && onSubmit(record) && onCancel();
     setErrors({ ...errors });
   };
   //view-----------------------------------------------------------------

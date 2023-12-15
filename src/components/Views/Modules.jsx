@@ -34,7 +34,7 @@ function Modules() {
   const handleAddSubmit = async (module) => {
     console.log("onSubmit");
     const response = await API.post(postModulesEndpoint, module);
-    return response.isSuccess;
+    return response.isSuccess && loadModules(getModulesEndpoint);
   };
 
   const handleJoinSubmit = async (modulemember) => {
