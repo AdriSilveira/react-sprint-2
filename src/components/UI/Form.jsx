@@ -21,14 +21,14 @@ export default function Form({ children, onsubmit, onCancel }) {
   return (
     <form
       className="BorderedForm"
-      onSubmit={(event) => handleSubmit(event, onsubmit)}
+      onSubmit={(event) => handleSubmit(event, onSubmit)}
     >
       <div className="FormTray">{children}</div>
 
       {/* <ActionTray> */}
       <div className="form-buttons">
         <button type="submit">Submit</button>
-        <button type="button" onClick={handleCancel}>
+        <button type="button" onClick={handleCancel()}>
           Cancel
         </button>
       </div>
